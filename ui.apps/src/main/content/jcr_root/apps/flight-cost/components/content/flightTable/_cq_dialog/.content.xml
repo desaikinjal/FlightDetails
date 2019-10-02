@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          jcr:primaryType="nt:unstructured" jcr:title="Flight Details Table"
+          sling:resourceType="cq/gui/components/authoring/dialog">
+    <content sling:resourceType="granite/ui/components/coral/foundation/container"
+             jcr:primaryType="nt:unstructured">
+        <items jcr:primaryType="nt:unstructured">
+            <tabs sling:resourceType="granite/ui/components/coral/foundation/tabs"
+                  jcr:primaryType="nt:unstructured" maximized="{Boolean}true">
+                <items jcr:primaryType="nt:unstructured">
+                    <Basic sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"
+                           jcr:primaryType="nt:unstructured" margin="{Boolean}false"
+                           jcr:title="Basic">
+                        <items jcr:primaryType="nt:unstructured">
+                            <column jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/container">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <multifieldcollection
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                            fieldDescription="Click + to add a new page" fieldLabel="Multifield collection"
+                                            jcr:primaryType="nt:unstructured" composite="{Boolean}true"
+                                            name="./multiCol">
+                                        <field sling:resourceType="granite/ui/components/coral/foundation/container"
+                                               jcr:primaryType="nt:unstructured" name="./flightTableChildren">
+                                            <items jcr:primaryType="nt:unstructured">
+                                                <departFrom
+                                                        jcr:primaryType="nt:unstructured"
+                                                        sling:resourceType="granite/ui/components/foundation/form/textfield"
+                                                        fieldDescription="Depart From "
+                                                        fieldLabel="Depart From "
+                                                        name="./departFrom"/>
+                                                <arriveTo
+                                                        jcr:primaryType="nt:unstructured"
+                                                        sling:resourceType="granite/ui/components/foundation/form/textfield"
+                                                        fieldDescription="Arrive To "
+                                                        fieldLabel="Arrive To "
+                                                        name="./arriveTo"/>
+                                                <price
+                                                        jcr:primaryType="nt:unstructured"
+                                                        sling:resourceType="granite/ui/components/foundation/form/textfield"
+                                                        fieldDescription="Price"
+                                                        fieldLabel="$ Price "
+                                                        name="./price"/>
+                                            </items>
+                                        </field>
+                                    </multifieldcollection>
+                                </items>
+                            </column>
+                        </items>
+                    </Basic>
+                </items>
+            </tabs>
+        </items>
+    </content>
+</jcr:root>

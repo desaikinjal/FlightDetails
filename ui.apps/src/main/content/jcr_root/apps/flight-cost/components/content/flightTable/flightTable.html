@@ -1,0 +1,81 @@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+
+var userAge = '';
+
+function isNumber(evt) {
+alert($("#ageId").val());
+userAge = $("#ageId").val();
+
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
+
+
+$(document).ready(function(){
+
+
+
+var price='';
+$("#priceId").on("change",function(){
+    price = $("#priceId").val();
+});
+
+var clubLevel='';
+$("#clubId").on("change",function(){
+    clubLevel = $("#clubId").val();
+});
+
+
+
+$("button").click(function(){
+    $.ajax({
+    url: "/bin/flightDetails?price=" + price + "&clubLevel=" + clubLevel + "&userAge=" + userAge,
+    type: "GET",
+    contentType:"application/json",
+    success: function(result){
+    var result = {"costPrice":"100","rewardPrice":"0"};
+    alert(result);
+      $("#div1").html(result);
+    }});
+  });
+});
+</script>
+
+<form method="#">
+    <div>
+        Flight Details :
+        <sly data-sly-use.multiItems="com.flight.cost.core.FlightDetails">
+            <select id="priceId" data-sly-list="${multiItems.flights}">
+                <option value="${item.price}">${item.departFrom}</option>
+            </select>
+        </sly>
+    </div>
+
+    <div>
+        Club Level :
+        <select id="clubId">
+            <option value="none">NONE</option>
+            <option value="bronze">BRONZE</option>
+            <option value="silver">SILVER</option>
+            <option value="gold">GOLD</option>
+        </select>
+    </div>
+
+    <div>
+        Age :
+        <input type="text" class="textfield" value="" id="ageId" name="extra7" onkeyup="return isNumber(event)"/>
+    </div>
+
+    <div id="div1">
+        <h2>Display Discount Details</h2>
+    </div>
+
+    <button>Get Flight Details</button>
+
+</form>
