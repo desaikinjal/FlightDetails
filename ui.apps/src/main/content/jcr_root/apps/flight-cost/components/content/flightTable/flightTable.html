@@ -1,51 +1,21 @@
-
+<meta http-equiv="Content-type" value="text/html; charset=UTF-8" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script>
 
-var userAge = '';
-
-function isNumber(evt) {
-alert($("#ageId").val());
-userAge = $("#ageId").val();
-
-    evt = (evt) ? evt : window.event;
-    var charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-        return false;
-    }
-    return true;
+<style>
+table {
+    border-collapse: collapse;
+    margin-bottom: 10px;
 }
 
+table, td, th {
+    border: 1px solid darkgray;
+    text-align: center;
+}
 
-$(document).ready(function(){
-
-
-
-var price='';
-$("#priceId").on("change",function(){
-    price = $("#priceId").val();
-});
-
-var clubLevel='';
-$("#clubId").on("change",function(){
-    clubLevel = $("#clubId").val();
-});
-
-
-
-$("button").click(function(){
-    $.ajax({
-    url: "/bin/flightDetails?price=" + price + "&clubLevel=" + clubLevel + "&userAge=" + userAge,
-    type: "GET",
-    contentType:"application/json",
-    success: function(result){
-    var result = {"costPrice":"100","rewardPrice":"0"};
-    alert(result);
-      $("#div1").html(result);
-    }});
-  });
-});
-</script>
+div {
+    margin-bottom: 10px;
+}
+</style>
 
 <form method="#">
     <div>
@@ -69,13 +39,73 @@ $("button").click(function(){
 
     <div>
         Age :
-        <input type="text" class="textfield" value="" id="ageId" name="extra7" onkeyup="return isNumber(event)"/>
+        <input type="text" class="textfield" value="" id="ageId" onkeyup="return isNumber(event)"/>
     </div>
 
-    <div id="div1">
+    <table>
         <h2>Display Discount Details</h2>
-    </div>
 
-    <button>Get Flight Details</button>
+        <tr style="border: 1px solid red;">
+            <td>Actual Cost</td><td>Discount Cost</td><td>Reward points</td>
+        </tr>
+
+        <tr style="border: 1px solid red;">
+            <td id="td1"></td><td id="td2"></td><td id="td3"></td>
+        </tr>
+
+    </table>
+
+    <input type="button" value="Submit"  name="submit" id="submit" value="Submit">
 
 </form>
+
+<script type="text/javascript">
+var userAge = '';
+
+function isNumber(evt) {
+    userAge = $('#ageId').val();
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
+
+$(document).ready(function(){
+
+var price='';
+$("#priceId").on("change",function(){
+    price = $("#priceId").val();
+});
+
+var clubLevel='';
+$("#clubId").on("change",function(){
+    clubLevel = $("#clubId").val();
+});
+
+$('#submit').click(function() {
+
+    var failure = function(err) {
+    	alert("Unable to retrive data "+err);
+    };
+
+    $.ajax({
+    url: "/bin/flightDetails?price=" + price + "&clubLevel=" + clubLevel + "&userAge=" + userAge,
+    type: "GET",
+    contentType: "application/json; charset=utf-8",
+    async: false,
+    dataType:"json",
+    error: function (xhr, status)
+    {
+        alert(status);
+    },
+    success: function(data){
+        $("#td1").html(data.actualCost);
+        $("#td2").html(data.discountedCost);
+        $("#td3").html(data.rewardPoints);
+    }
+    });
+  });
+});
+</script>

@@ -3,13 +3,12 @@
  */
 package com.flight.cost.core.servlets;
 
+import com.google.gson.JsonObject;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
-import org.apache.sling.commons.json.JSONException;
-import org.apache.sling.commons.json.JSONObject;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
@@ -27,15 +26,6 @@ import java.io.IOException;
                 "sling.servlet.extensions=" + "json",
                 "metatype=true"
         })
-/*
-@SlingServlet(
-        label = "Flight Details Servlet",
-        paths = { "/bin/flightDetails" },
-        methods = { "GET", "POST" },
-        resourceTypes = { },
-        selectors = { "print.a4" },
-        extensions = { "json", "html" }
-)*/
 
 /**
  *
@@ -53,6 +43,18 @@ public class FlightDetailsServlet extends SlingAllMethodsServlet {
     private  static int DOLLARS_POINTS_12 = 12;
     private  static int DOLLARS_POINTS_10 = 10;
 
+    private static  final  String EMPTY="";
+
+    private static final String PRICE = "price";
+    private static final String CLUB_LEVEL = "clubLevel";
+    private static final String USER_AGE = "userAge";
+
+    private static final String ACTUAL_COST = "actualCost";
+    private static final String DISCOUNTED_COST = "discountedCost";
+    private static final String REWARD_POINTS = "rewardPoints";
+
+    private static final String APPLICATION_JSON = "application/json";
+    private static final String UTF_8 = "UTF-8";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -68,29 +70,20 @@ public class FlightDetailsServlet extends SlingAllMethodsServlet {
     protected void doGet(final SlingHttpServletRequest request,
                           final SlingHttpServletResponse response) throws ServletException, IOException {
 
-        response.setContentType("application/json");
-
-        logger.info("HIIiiii");
-        JSONObject fObj = new JSONObject();
+        JsonObject fObj = new JsonObject();
         final Resource resource = request.getResource();
 
-        try {
-            String price = request.getParameter("price");
-            String clubLevel = request.getParameter("clubLevel");
-            String userAge = request.getParameter("userAge");
-            String dollarPoints = request.getParameter("dollarPoints");
+        String price = request.getParameter(PRICE);
+        String clubLevel = request.getParameter(CLUB_LEVEL);
+        String userAge = request.getParameter(USER_AGE);
 
-            fObj.put("actualCost", price);
-            fObj.put("discountedCost", calculateDiscount(Integer.parseInt(userAge), clubLevel, Integer.parseInt(price)));
-            fObj.put("rewardPoints", calculatePoints(clubLevel, Integer.parseInt(price)));
+        fObj.addProperty(ACTUAL_COST, price);
+        int discountedCost = calculateDiscount(Integer.parseInt(userAge), clubLevel, Integer.parseInt(price));
+        fObj.addProperty(DISCOUNTED_COST, discountedCost);
+        fObj.addProperty(REWARD_POINTS, calculatePoints(clubLevel, discountedCost));
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        logger.info("Final Object " ,fObj.toString());
-        logger.info("Final Object " + fObj.toString());
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+        response.setContentType(APPLICATION_JSON);
+        response.setCharacterEncoding(UTF_8);
 
         response.getWriter().write(fObj.toString());
     }
@@ -103,35 +96,33 @@ public class FlightDetailsServlet extends SlingAllMethodsServlet {
      * @return
      */
 
-    private String calculateDiscount(Integer userAge, String clubLevel, Integer actualCost){
+    private Integer calculateDiscount(Integer userAge, String clubLevel, Integer actualCost){
 
         if (userAge >= 0 && userAge <= 2 && (NONE.equalsIgnoreCase(clubLevel) || BRONZE.equalsIgnoreCase(clubLevel) || SILVER.equalsIgnoreCase(clubLevel))){
-            return (String.valueOf(0));
+            return 0;
         } else if (userAge >= 3 && userAge <= 16 && (BRONZE.equalsIgnoreCase(clubLevel) || SILVER.equalsIgnoreCase(clubLevel))) {
-            return (String.valueOf((actualCost*75)/100));
+            return (actualCost*75)/100;
         } else if (userAge >= 9 && userAge <= 16 && GOLD.equalsIgnoreCase(clubLevel)){
-            return (String.valueOf((actualCost*75)/100));
+            return (actualCost*75)/100;
         } else if (userAge >= 0 && userAge <= 8 && GOLD.equalsIgnoreCase(clubLevel)){
-            return (String.valueOf(0));
+            return 0;
         }
-        return (String.valueOf(actualCost));
+        return actualCost;
     }
 
     /**
      * Calculate reward points based on club level
      * @param clubLevel
-     * @param actualCost
+     * @param discountedCost
      * @return
      */
 
-    private String calculatePoints(String clubLevel, Integer actualCost){
+    private String calculatePoints(String clubLevel, Integer discountedCost){
 
-        if(BRONZE.equalsIgnoreCase(clubLevel)) return String.valueOf(actualCost*DOLLARS_POINTS_15);
-        else if (SILVER.equalsIgnoreCase(clubLevel)) return String.valueOf(actualCost*DOLLARS_POINTS_12);
-        else if (GOLD.equalsIgnoreCase(clubLevel)) return String.valueOf(actualCost*DOLLARS_POINTS_10);
+        if(BRONZE.equalsIgnoreCase(clubLevel)) return String.valueOf(discountedCost*DOLLARS_POINTS_15);
+        else if (SILVER.equalsIgnoreCase(clubLevel)) return String.valueOf(discountedCost*DOLLARS_POINTS_12);
+        else if (GOLD.equalsIgnoreCase(clubLevel)) return String.valueOf(discountedCost*DOLLARS_POINTS_10);
 
         return String.valueOf(0);
     }
-
-
 }
