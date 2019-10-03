@@ -14,6 +14,7 @@ public class FlightDetails extends WCMUsePojo {
     private static final Logger logger = LoggerFactory.getLogger(FlightDetails.class);
 
     public static java.util.List<FlightDetailsModel> flightDetailsList;
+    public static java.util.List<FlightDetailsModel> returnFlightList;
 
     /**
      * Send flight times and cost to UI and populate "Flight Details" dropdown
@@ -27,6 +28,20 @@ public class FlightDetails extends WCMUsePojo {
             flightDetailsList = setFlightDetailsModel(childResource);
         }
         return flightDetailsList;
+    }
+
+    /**
+     *
+     * @return
+     */
+
+    public java.util.List<FlightDetailsModel> getReturnFlights() {
+        Resource childResource = getResource().getChild("returnFlightChildren");
+        logger.info("getFlights");
+        if (childResource != null) {
+            returnFlightList = setFlightDetailsModel(childResource);
+        }
+        return returnFlightList;
     }
 
     /**

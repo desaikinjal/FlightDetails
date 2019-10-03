@@ -19,9 +19,18 @@ div {
 
 <form method="#">
     <div>
-        Flight Details :
+        Flight From Sydney :
         <sly data-sly-use.multiItems="com.flight.cost.core.FlightDetails">
             <select id="priceId" data-sly-list="${multiItems.flights}">
+                <option value="${item.price}">${item.departFrom}</option>
+            </select>
+        </sly>
+    </div>
+
+    <div>
+        Flight From Melbourne :
+        <sly data-sly-use.returnItems="com.flight.cost.core.FlightDetails">
+            <select id="returnId" data-sly-list="${returnItems.returnFlights}">
                 <option value="${item.price}">${item.departFrom}</option>
             </select>
         </sly>
@@ -46,11 +55,11 @@ div {
         <h2>Display Discount Details</h2>
 
         <tr style="border: 1px solid red;">
-            <td>Actual Cost</td><td>Discount Cost</td><td>Reward points</td>
+            <td>Cost from Sydney</td><td>Cost from Melbourne</td><td>Total Cost</td><td>Discount Cost</td><td>Reward points</td>
         </tr>
 
         <tr style="border: 1px solid red;">
-            <td id="td1"></td><td id="td2"></td><td id="td3"></td>
+            <td id="td1"></td><td id="td2"></td><td id="td3"></td><td id="td4"></td><td id="td5">
         </tr>
 
     </table>
@@ -79,6 +88,11 @@ $("#priceId").on("change",function(){
     price = $("#priceId").val();
 });
 
+var returnPrice='';
+$("#returnId").on("change",function(){
+    returnPrice = $("#returnId").val();
+});
+
 var clubLevel='';
 $("#clubId").on("change",function(){
     clubLevel = $("#clubId").val();
@@ -91,7 +105,7 @@ $('#submit').click(function() {
     };
 
     $.ajax({
-    url: "/bin/flightDetails?price=" + price + "&clubLevel=" + clubLevel + "&userAge=" + userAge,
+    url: "/bin/flightDetails?price=" + price + "&returnPrice=" + returnPrice + "&clubLevel=" + clubLevel + "&userAge=" + userAge,
     type: "GET",
     contentType: "application/json; charset=utf-8",
     async: false,
@@ -101,9 +115,138 @@ $('#submit').click(function() {
         alert(status);
     },
     success: function(data){
-        $("#td1").html(data.actualCost);
-        $("#td2").html(data.discountedCost);
-        $("#td3").html(data.rewardPoints);
+        $("#td1").html(price);
+        $("#td2").html(returnPrice);
+        $("#td3").html(data.actualCost);
+        $("#td4").html(data.discountedCost);
+        $("#td5").html(data.rewardPoints);
+    }
+    });
+  });
+});
+</script>
+<meta http-equiv="Content-type" value="text/html; charset=UTF-8" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<style>
+table {
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+table, td, th {
+    border: 1px solid darkgray;
+    text-align: center;
+}
+
+div {
+    margin-bottom: 10px;
+}
+</style>
+
+<form method="#">
+    <div>
+        Flight From Sydney :
+        <sly data-sly-use.multiItems="com.flight.cost.core.FlightDetails">
+            <select id="priceId" data-sly-list="${multiItems.flights}">
+                <option value="${item.price}">${item.departFrom}</option>
+            </select>
+        </sly>
+    </div>
+
+    <div>
+        Flight From Melbourne :
+        <sly data-sly-use.returnItems="com.flight.cost.core.FlightDetails">
+            <select id="returnId" data-sly-list="${returnItems.returnFlights}">
+                <option value="${item.price}">${item.departFrom}</option>
+            </select>
+        </sly>
+    </div>
+
+    <div>
+        Club Level :
+        <select id="clubId">
+            <option value="none">NONE</option>
+            <option value="bronze">BRONZE</option>
+            <option value="silver">SILVER</option>
+            <option value="gold">GOLD</option>
+        </select>
+    </div>
+
+    <div>
+        Age :
+        <input type="text" class="textfield" value="" id="ageId" onkeyup="return isNumber(event)"/>
+    </div>
+
+    <table>
+        <h2>Display Discount Details</h2>
+
+        <tr style="border: 1px solid red;">
+            <td>Cost from Sydney</td><td>Cost from Melbourne</td><td>Total Cost</td><td>Discount Cost</td><td>Reward points</td>
+        </tr>
+
+        <tr style="border: 1px solid red;">
+            <td id="td1"></td><td id="td2"></td><td id="td3"></td><td id="td4"></td><td id="td5">
+        </tr>
+
+    </table>
+
+    <input type="button" value="Submit"  name="submit" id="submit" value="Submit">
+
+</form>
+
+<script type="text/javascript">
+var userAge = '';
+
+function isNumber(evt) {
+    userAge = $('#ageId').val();
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
+
+$(document).ready(function(){
+
+var price='';
+$("#priceId").on("change",function(){
+    price = $("#priceId").val();
+});
+
+var returnPrice='';
+$("#returnId").on("change",function(){
+    returnPrice = $("#returnId").val();
+});
+
+var clubLevel='';
+$("#clubId").on("change",function(){
+    clubLevel = $("#clubId").val();
+});
+
+$('#submit').click(function() {
+
+    var failure = function(err) {
+    	alert("Unable to retrive data "+err);
+    };
+
+    $.ajax({
+    url: "/bin/flightDetails?price=" + price + "&returnPrice=" + returnPrice + "&clubLevel=" + clubLevel + "&userAge=" + userAge,
+    type: "GET",
+    contentType: "application/json; charset=utf-8",
+    async: false,
+    dataType:"json",
+    error: function (xhr, status)
+    {
+        alert(status);
+    },
+    success: function(data){
+        $("#td1").html(price);
+        $("#td2").html(returnPrice);
+        $("#td3").html(data.actualCost);
+        $("#td4").html(data.discountedCost);
+        $("#td5").html(data.rewardPoints);
     }
     });
   });

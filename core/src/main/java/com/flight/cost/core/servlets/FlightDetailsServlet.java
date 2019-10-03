@@ -46,6 +46,7 @@ public class FlightDetailsServlet extends SlingAllMethodsServlet {
     private static  final  String EMPTY="";
 
     private static final String PRICE = "price";
+    private static final String RETURN_PRICE = "returnPrice";
     private static final String CLUB_LEVEL = "clubLevel";
     private static final String USER_AGE = "userAge";
 
@@ -74,11 +75,14 @@ public class FlightDetailsServlet extends SlingAllMethodsServlet {
         final Resource resource = request.getResource();
 
         String price = request.getParameter(PRICE);
+        String returnPrice = request.getParameter(RETURN_PRICE);
         String clubLevel = request.getParameter(CLUB_LEVEL);
         String userAge = request.getParameter(USER_AGE);
 
-        fObj.addProperty(ACTUAL_COST, price);
-        int discountedCost = calculateDiscount(Integer.parseInt(userAge), clubLevel, Integer.parseInt(price));
+        int combinedPrice = Integer.parseInt(price) + Integer.parseInt(returnPrice);
+        fObj.addProperty(ACTUAL_COST, combinedPrice);
+
+        int discountedCost = calculateDiscount(Integer.parseInt(userAge), clubLevel, combinedPrice);
         fObj.addProperty(DISCOUNTED_COST, discountedCost);
         fObj.addProperty(REWARD_POINTS, calculatePoints(clubLevel, discountedCost));
 
