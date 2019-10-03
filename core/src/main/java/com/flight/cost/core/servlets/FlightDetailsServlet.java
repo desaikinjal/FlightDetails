@@ -106,16 +106,23 @@ public class FlightDetailsServlet extends SlingAllMethodsServlet {
     private String calculateDiscount(Integer userAge, String clubLevel, Integer actualCost){
 
         if (userAge >= 0 && userAge <= 2 && (NONE.equalsIgnoreCase(clubLevel) || BRONZE.equalsIgnoreCase(clubLevel) || SILVER.equalsIgnoreCase(clubLevel))){
-            return (String.valueOf(actualCost));
+            return (String.valueOf(0));
         } else if (userAge >= 3 && userAge <= 16 && (BRONZE.equalsIgnoreCase(clubLevel) || SILVER.equalsIgnoreCase(clubLevel))) {
             return (String.valueOf((actualCost*75)/100));
         } else if (userAge >= 9 && userAge <= 16 && GOLD.equalsIgnoreCase(clubLevel)){
             return (String.valueOf((actualCost*75)/100));
         } else if (userAge >= 0 && userAge <= 8 && GOLD.equalsIgnoreCase(clubLevel)){
-            return (String.valueOf(actualCost));
+            return (String.valueOf(0));
         }
-        return "";
+        return (String.valueOf(actualCost));
     }
+
+    /**
+     * Calculate reward points based on club level
+     * @param clubLevel
+     * @param actualCost
+     * @return
+     */
 
     private String calculatePoints(String clubLevel, Integer actualCost){
 
@@ -123,7 +130,7 @@ public class FlightDetailsServlet extends SlingAllMethodsServlet {
         else if (SILVER.equalsIgnoreCase(clubLevel)) return String.valueOf(actualCost*DOLLARS_POINTS_12);
         else if (GOLD.equalsIgnoreCase(clubLevel)) return String.valueOf(actualCost*DOLLARS_POINTS_10);
 
-        return String.valueOf(actualCost);
+        return String.valueOf(0);
     }
 
 
