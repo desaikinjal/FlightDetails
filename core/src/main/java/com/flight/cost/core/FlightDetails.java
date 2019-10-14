@@ -23,7 +23,7 @@ public class FlightDetails extends WCMUsePojo {
 
     public java.util.List<FlightDetailsModel> getFlights() {
         Resource childResource = getResource().getChild("flightTableChildren");
-        logger.info("getFlights");
+
         if (childResource != null) {
             flightDetailsList = setFlightDetailsModel(childResource);
         }
@@ -52,8 +52,6 @@ public class FlightDetails extends WCMUsePojo {
 
     private java.util.List<FlightDetailsModel> setFlightDetailsModel(Resource resource) {
         flightDetailsList = new ArrayList<>();
-
-        logger.info("setFlightDetailsModel");
 
         if (resource != null) {
             Iterator<Resource> linkResources = resource.listChildren();
